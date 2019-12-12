@@ -1,2 +1,8 @@
 #ignore user
 /*.user
+
+#ignore log
+log/
+
+#ignore build
+build/
