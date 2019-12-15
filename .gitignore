@@ -6,3 +6,6 @@ log/
 
 #ignore build
 build/
+
+#ignore data
+data/
