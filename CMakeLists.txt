@@ -13,6 +13,14 @@ INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
 
 FIND_PACKAGE(OpenGL REQUIRED)
+INCLUDE_DIRECTORIES(${OpenGL_INCLUDE_DIRS})
+LINK_DIRECTORIES(${OpenGL_LIBRARY_DIRS})
+
+FIND_PACKAGE(OpenGL REQUIRED)
+INCLUDE_DIRECTORIES(${OpenGL_INCLUDE_DIRS})
+LINK_DIRECTORIES(${OpenGL_LIBRARY_DIRS})
+
+FIND_PACKAGE(GLUT REQUIRED)
 INCLUDE_DIRECTORIES(${GLUT_INCLUDE_DIRS})
 LINK_DIRECTORIES(${GLUT_LIBRARY_DIRS})
 
@@ -27,7 +35,6 @@ INCLUDE_DIRECTORIES(${FMT_INCLUDE_DIRS})
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS
 #                            chrono
-                            program_options
 #                            filesystem
 #                            thread
 #                            system)
@@ -49,17 +56,40 @@ ADD_SUBDIRECTORY(${SRC_PATH})
 
 AUX_SOURCE_DIRECTORY(src/visualizer VISUAL_SRC)
 AUX_SOURCE_DIRECTORY(src/bin2pcd BIN2PCD_SRC)
+AUX_SOURCE_DIRECTORY(src/disparity2pcl Depth2Pcl_SRC)
 
 set(INC_PATH inc)
 INCLUDE_DIRECTORIES(${INC_PATH})
 
-LINK_LIBRARIES(${OpenCV_LIBS}
-               ${Boost_LIBRARIES}
-               ${PCL_LIBRARIES}
-               glog
-               fmt::fmt)
+SET(visualizer_LIBS ${Boost_LIBRARIES}
+                    ${PCL_LIBRARIES}
+                    ${OpenGL_LIBRARIES}
+                    ${GLUT_LIBRARY}
+                    glog
+                    fmt::fmt)
+
+SET(bin2pcd_LIBS ${PCL_LIBRARIES}
+                 glog
+                 fmt::fmt)
+
+SET(Depth2Pcl_LIBS ${Boost_LIBRARIES}
+                    ${PCL_LIBRARIES}
+                    ${OpenCV_LIBS}
+                    glog
+                    fmt::fmt)
+
+#LINK_LIBRARIES(#${OpenCV_LIBS}
+#               ${Boost_LIBRARIES}
+#               ${PCL_LIBRARIES}
+#               glog
+#               fmt::fmt)
 
 add_executable(pcl_visualizer ${VISUAL_SRC})
+target_link_libraries(pcl_visualizer ${visualizer_LIBS})
+
 
 add_executable(bin_to_pcd ${BIN2PCD_SRC})
-#target_link_libraries(pcl_visualizer )
+target_link_libraries(bin_to_pcd ${bin2pcd_LIBS})
+
+add_executable(depth_to_pcl ${Depth2Pcl_SRC})
+target_link_libraries(depth_to_pcl ${Depth2Pcl_LIBS})
