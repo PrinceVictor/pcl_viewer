@@ -8,7 +8,9 @@
 #include <pcl/io/pcd_io.h>
 #include <omp.h>
 
-namespace BIN2PCD {
+#include "log.h"
+
+namespace bintopcd {
 
 using std::string;
 using std::vector;

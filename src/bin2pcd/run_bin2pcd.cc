@@ -1,4 +1,4 @@
-#include <log.h>
+#include "log.h"
 #include <bin2pcd/bin2pcd.h>
 
 #include <iostream>
@@ -13,8 +13,7 @@ using std::string;
 int main(int argc, char *argv[])
 {
 
-//  FLAGS_log_dir = "../log";
-  FLAGS_log_dir = "/home/victor/mobile_robot/pcl_viewer/pointcloud_view/log";
+  FLAGS_log_dir = "../log";
 
   google::InitGoogleLogging(argv[0]);
 
@@ -46,13 +45,14 @@ int main(int argc, char *argv[])
 
   std::vector<string> filename_list;
 
-  BIN2PCD::get_filename_list(in_path, filename_list);
+  bintopcd::get_filename_list(in_path, filename_list);
 
-  omp_set_num_threads(4);
-#pragma omp parallel for
+//  omp_set_num_threads(4);
+//#pragma omp parallel for
+
   for(int i=0; i<filename_list.size(); i++){
 
-    BIN2PCD::convert_bin2pcd(in_path, filename_list[i], out_path);
+    bintopcd::convert_bin2pcd(in_path, filename_list[i], out_path);
   }
 
   google::ShutdownGoogleLogging();

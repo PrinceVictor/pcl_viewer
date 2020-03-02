@@ -1,10 +1,9 @@
-#ifndef BIN2PCD_H
-#define BIN2PCD_H
+#ifndef __BIN2PCD_H__
+#define __BIN2PCD_H__
 
-#include <log.h>
 #include <iostream>
 
-namespace BIN2PCD {
+namespace bintopcd {
 
 using std::string;
 using std::vector;
