@@ -1,6 +1,5 @@
 #include "log.h"
 #include "disparty2pcl/disparity_to_pcl.h"
-#include <pcl/range_image/range_image.h>
 
 using disparitytopcl::Dispt_pcl;
 
@@ -23,13 +22,7 @@ int main(int argc, char **argv)
 
   std::shared_ptr<Dispt_pcl> disp_pcl = std::make_shared<Dispt_pcl>();
 
-  disp_pcl->disparity_image_process(argv[1]);
-
-  disp_pcl->add_color_image(argv[2]);
-
-  disp_pcl->convert_pointcloud();
-
-  disp_pcl->viewer();
+  disp_pcl->work_flow(argv[1], argv[2]);
 
   google::ShutdownGoogleLogging();
 

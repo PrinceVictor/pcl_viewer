@@ -29,9 +29,14 @@ public:
 
   void add_color_image(const std::string& image_path);
 
+  void create_pointcloud();
+
   void convert_pointcloud();
 
   void viewer();
+
+  void work_flow(const std::string& image_path1,
+                 const std::string& image_path2);
 
 private:
 

@@ -35,7 +35,7 @@ FIND_PACKAGE(FMT REQUIRED)
 INCLUDE_DIRECTORIES(${FMT_INCLUDE_DIRS})
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS
-#                            chrono
+                            chrono
 #                            filesystem
 #                            thread
 #                            system)
