@@ -1,6 +1,8 @@
 #include "log.h"
 #include "disparty2pcl/disparity_to_pcl.h"
+#include <pcl/range_image/range_image.h>
 
+using disparitytopcl::Dispt_pcl;
 
 int main(int argc, char **argv)
 {
@@ -13,12 +15,21 @@ int main(int argc, char **argv)
 
   LOG_OUTPUT("---Convert disparity to point cloud---");
 
+  if(argc < 3){
 
+    LOG_OUTPUT("error! need input for diparity and color image path");
+    return -1;
+  }
 
-//  pcl::PointCloud<pcl::PointXYZI>::Ptr points(new pcl::PointCloud<pcl::PointXYZI>);
+  std::shared_ptr<Dispt_pcl> disp_pcl = std::make_shared<Dispt_pcl>();
 
-//  std::string file = argv[1];
-//  pcl::io::loadPCDFile(file, *points);
+  disp_pcl->disparity_image_process(argv[1]);
+
+  disp_pcl->add_color_image(argv[2]);
+
+  disp_pcl->convert_pointcloud();
+
+  disp_pcl->viewer();
 
   google::ShutdownGoogleLogging();
 
