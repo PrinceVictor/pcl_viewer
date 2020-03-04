@@ -15,6 +15,8 @@
 #include <cstring>
 #include <memory>
 
+
+
 namespace disparitytopcl {
 
 class Dispt_pcl {
@@ -38,6 +40,10 @@ public:
   void work_flow(const std::string& image_path1,
                  const std::string& image_path2);
 
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr& get_point_cloud();
+
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud;
+
 private:
 
   void camera_parameter_init();
@@ -49,7 +55,7 @@ private:
   cv::Mat color_image_;
   cv::Mat disparity_image_;
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud;
+
 
   Eigen::Matrix3d camera_intrinsics_k_;
   double baseline_fb_;

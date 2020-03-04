@@ -1,5 +1,6 @@
 #include "log.h"
-#include <visualizer/visualizer.h>
+#include <visualizer/pcl_visualizer.h>
+#include <visualizer/opengl_visualizer.h>
 
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -19,19 +20,6 @@ int main(int argc, char *argv[])
 
   LOG_OUTPUT("---This is a point cloud viewer, supported by OpenGL---");
 
-  //  glutInit(&argc, argv);
-  //  glutInitDisplayMode(GLUT_DEPTH | GLUT_SINGLE | GLUT_RGBA);
-
-  //  glutInitWindowPosition(0, 0);
-  //  glutInitWindowSize(320, 320);
-
-  //  glutCreateWindow("test");
-
-  //  glutDisplayFunc(renderScene);
-
-  //  glutReshapeFunc(changeSize);
-
-  //  glutMainLoop();
 
 
 
@@ -42,7 +30,7 @@ int main(int argc, char *argv[])
 
   std::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("pcl viewer"));
 
-  pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZI> fildColor(points, "z");
+//  pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZI> fildColor(points, "z");
 
   //set viewer backgroud color value for rgb
   viewer->setBackgroundColor (0, 0, 0);

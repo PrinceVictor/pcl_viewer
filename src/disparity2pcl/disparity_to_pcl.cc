@@ -4,9 +4,9 @@
 #include <pcl/visualization/cloud_viewer.h>
 
 #include <chrono>
+#include <mutex>
 #include <cmath>
 #include <boost/make_shared.hpp>
-
 
 namespace disparitytopcl {
 
@@ -23,6 +23,37 @@ Dispt_pcl::Dispt_pcl(){
 
 Dispt_pcl::~Dispt_pcl(){
 
+}
+
+void Dispt_pcl::work_flow(const std::string& image_path1,
+                          const std::string& image_path2){
+
+  std::chrono::steady_clock::time_point time_point =
+      std::chrono::steady_clock::now();
+
+  disparity_image_process(image_path1);
+
+  add_color_image(image_path2);
+
+  double load_image = std::chrono::duration_cast<std::chrono::milliseconds>
+      (std::chrono::steady_clock::now() - time_point).count();
+  LOG_OUTPUT("load image took {} ms", load_image );
+
+  create_pointcloud();
+
+  double resize_pointcloud = std::chrono::duration_cast<std::chrono::milliseconds>
+      (std::chrono::steady_clock::now() - time_point).count();
+  LOG_OUTPUT("resize num of {} points took {} ms",
+             disparity_image_.cols * disparity_image_.rows,
+             resize_pointcloud-load_image );
+
+  convert_pointcloud();
+
+  double conver_pcl = std::chrono::duration_cast<std::chrono::milliseconds>
+      (std::chrono::steady_clock::now() - time_point).count();
+  LOG_OUTPUT("convert into point cloud took {} ms", conver_pcl-resize_pointcloud );
+
+//  viewer();
 }
 
 void Dispt_pcl::camera_parameter_init(){
@@ -58,7 +89,7 @@ void Dispt_pcl::camera_parameter_init(){
 
 }
 
-void Dispt_pcl::disparity_image_process(const std::string& image_path){
+inline void Dispt_pcl::disparity_image_process(const std::string& image_path){
 
   disparity_image_ = cv::imread(image_path, cv::IMREAD_UNCHANGED);
 
@@ -85,7 +116,7 @@ void Dispt_pcl::disparity_image_process(const std::string& image_path){
 
 }
 
-void Dispt_pcl::add_color_image(const std::string &image_path){
+inline void Dispt_pcl::add_color_image(const std::string &image_path){
 
   color_image_ = cv::imread(image_path, cv::IMREAD_UNCHANGED);
 
@@ -139,35 +170,8 @@ void Dispt_pcl::convert_pointcloud(){
   }
 }
 
-void Dispt_pcl::work_flow(const std::string& image_path1,
-                          const std::string& image_path2){
-
-  std::chrono::steady_clock::time_point time_point =
-      std::chrono::steady_clock::now();
-
-  disparity_image_process(image_path1);
-
-  add_color_image(image_path2);
-
-  double load_image = std::chrono::duration_cast<std::chrono::milliseconds>
-      (std::chrono::steady_clock::now() - time_point).count();
-  LOG_OUTPUT("load image took {} ms", load_image );
-
-  create_pointcloud();
-
-  double resize_pointcloud = std::chrono::duration_cast<std::chrono::milliseconds>
-      (std::chrono::steady_clock::now() - time_point).count();
-  LOG_OUTPUT("resize num of {} points took {} ms",
-             disparity_image_.cols * disparity_image_.rows,
-             resize_pointcloud-load_image );
-
-  convert_pointcloud();
-
-  double conver_pcl = std::chrono::duration_cast<std::chrono::milliseconds>
-      (std::chrono::steady_clock::now() - time_point).count();
-  LOG_OUTPUT("convert into point cloud took {} ms", conver_pcl-resize_pointcloud );
-
-  //  disp_pcl->viewer();
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr& Dispt_pcl::get_point_cloud(){
+  return point_cloud;
 }
 
 void Dispt_pcl::viewer(){
@@ -184,6 +188,7 @@ void Dispt_pcl::viewer(){
   //add points
   //  viewer->addPointCloud<pcl::PointXYZI>(points, fildColor, "sample cloud");
   viewer->addPointCloud<pcl::PointXYZRGB>(point_cloud, rgb, "sample cloud");
+//  viewer->addPointCloud<pcl::PointXYZRGB>(point_cloud, "sample cloud");
 
   viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud"); // 设置点云大小
 

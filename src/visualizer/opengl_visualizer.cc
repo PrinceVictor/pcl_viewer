@@ -1,13 +1,23 @@
 #include "log.h"
-#include <visualizer/visualizer.h>
-
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/io/pcd_io.h>
+#include <visualizer/opengl_visualizer.h>
 
 #include <GL/glut.h>
 
 #include <iostream>
 
+//  glutInit(&argc, argv);
+//  glutInitDisplayMode(GLUT_DEPTH | GLUT_SINGLE | GLUT_RGBA);
+
+//  glutInitWindowPosition(0, 0);
+//  glutInitWindowSize(320, 320);
+
+//  glutCreateWindow("test");
+
+//  glutDisplayFunc(renderScene);
+
+//  glutReshapeFunc(changeSize);
+
+//  glutMainLoop();
 
 void renderScene(void) {
   glClear(GL_COLOR_BUFFER_BIT);
@@ -50,6 +60,3 @@ void changeSize(int w, int h) {
 //         glLoadIdentity();
 //         gluLookAt(0.0,0.0,5.0, 0.0,0.0,-1.0,0.0f,1.0f,0.0f);
 }
-
-
-

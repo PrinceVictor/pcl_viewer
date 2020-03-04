@@ -52,12 +52,8 @@ endif()
 
 OPTION(USE_DEBUG off)
 if(USE_DEBUG)
-add_definitions("-DUSE_DEBUG")
+  add_definitions("-DUSE_DEBUG")
 endif(USE_DEBUG)
-#set(SRC_PATH src)
-#ADD_SUBDIRECTORY(${SRC_PATH})
-#set(SRC_LIST ${SRC_PATH}/visualizer.cc
-#             ${SRC_PATH}/run_visual.cc)
 
 AUX_SOURCE_DIRECTORY(src/visualizer VISUAL_SRC)
 AUX_SOURCE_DIRECTORY(src/bin2pcd BIN2PCD_SRC)
@@ -65,6 +61,13 @@ AUX_SOURCE_DIRECTORY(src/disparity2pcl Depth2Pcl_SRC)
 
 set(INC_PATH inc)
 INCLUDE_DIRECTORIES(${INC_PATH})
+
+set(visualizer src/visualizer)
+#ADD_SUBDIRECTORY(${SRC_PATH})
+set(visluaizer_src ${visualizer}/pcl_visualizer.cc
+                   ${INC_PATH}/visualizer/pcl_visualizer.h)
+
+add_library(visualizer_pcl SHARED ${visluaizer_src})
 
 SET(visualizer_LIBS ${Boost_LIBRARIES}
                     ${PCL_LIBRARIES}
@@ -96,4 +99,5 @@ add_executable(bin_to_pcd ${BIN2PCD_SRC})
 target_link_libraries(bin_to_pcd ${bin2pcd_LIBS})
 
 add_executable(depth_to_pcl ${Depth2Pcl_SRC})
-target_link_libraries(depth_to_pcl ${Depth2Pcl_LIBS})
+target_link_libraries(depth_to_pcl ${Depth2Pcl_LIBS}
+                                   visualizer_pcl)
