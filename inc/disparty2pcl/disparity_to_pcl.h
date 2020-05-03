@@ -40,9 +40,16 @@ public:
   void work_flow(const std::string& image_path1,
                  const std::string& image_path2);
 
+  void work_flow(const cv::Mat& disp,
+                 const cv::Mat& color);
+
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr& get_point_cloud();
 
+  uint8_t& get_flag();
+
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud;
+
+  uint8_t point_cloud_flag_;
 
 private:
 
@@ -54,8 +61,6 @@ private:
 
   cv::Mat color_image_;
   cv::Mat disparity_image_;
-
-
 
   Eigen::Matrix3d camera_intrinsics_k_;
   double baseline_fb_;

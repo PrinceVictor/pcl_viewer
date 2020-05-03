@@ -13,9 +13,15 @@ FIND_PACKAGE(OpenGL REQUIRED)
 INCLUDE_DIRECTORIES(${OpenGL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${OpenGL_LIBRARY_DIRS})
 
+#set(VTK_DIR "/usr/local/lib/cmake/vtk-8.2")
+#FIND_PACKAGE(VTK REQUIRED)
+#INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS})
+#LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
+
 FIND_PACKAGE(PCL 1.7 REQUIRED)
 INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
+list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
 
 FIND_PACKAGE(OpenGL REQUIRED)
 INCLUDE_DIRECTORIES(${OpenGL_INCLUDE_DIRS})
@@ -36,10 +42,10 @@ INCLUDE_DIRECTORIES(${FMT_INCLUDE_DIRS})
 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS
                             chrono
-#                            filesystem
-#                            thread
-#                            system)
-                                   )
+                            filesystem
+                            thread
+                            system)
+
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 FIND_PACKAGE(OpenMP REQUIRED)
@@ -50,10 +56,23 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS"${CMAKE_EXE_LINKER_FLAGS}${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-OPTION(USE_DEBUG off)
+set(msg_inc /usr/local/include)
+set(msg_lib /usr/local/lib)
+INCLUDE_DIRECTORIES(${msg_inc})
+LINK_DIRECTORIES(${msg_lib})
+INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIRS})
+
+FIND_PACKAGE(Protobuf REQUIRED)
+if(PROTOBUF_FOUND)
+message(STATUS "PROTOBUF FOUND")
+endif()
+
+OPTION(USE_DEBUG on)
 if(USE_DEBUG)
   add_definitions("-DUSE_DEBUG")
 endif(USE_DEBUG)
+
+LINK_DIRECTORIES(${pcl_visualizer_BINARY_DIR})
 
 AUX_SOURCE_DIRECTORY(src/visualizer VISUAL_SRC)
 AUX_SOURCE_DIRECTORY(src/bin2pcd BIN2PCD_SRC)
@@ -71,18 +90,25 @@ add_library(visualizer_pcl SHARED ${visluaizer_src})
 
 SET(visualizer_LIBS ${Boost_LIBRARIES}
                     ${PCL_LIBRARIES}
+#                    ${VTK_LIBRARIES}
                     ${OpenGL_LIBRARIES}
                     ${GLUT_LIBRARY}
                     glog
                     fmt::fmt)
 
 SET(bin2pcd_LIBS ${PCL_LIBRARIES}
+#                 ${VTK_LIBRARIES}
                  glog
                  fmt::fmt)
 
 SET(Depth2Pcl_LIBS ${Boost_LIBRARIES}
                     ${PCL_LIBRARIES}
+#                    ${VTK_LIBRARIES}
                     ${OpenCV_LIBS}
+                    ${PROTOBUF_LIBRARIES}
+                    image_msg_share
+                    socket_share
+                    visualizer_pcl
                     glog
                     fmt::fmt)
 
@@ -99,5 +125,4 @@ add_executable(bin_to_pcd ${BIN2PCD_SRC})
 target_link_libraries(bin_to_pcd ${bin2pcd_LIBS})
 
 add_executable(depth_to_pcl ${Depth2Pcl_SRC})
-target_link_libraries(depth_to_pcl ${Depth2Pcl_LIBS}
-                                   visualizer_pcl)
+target_link_libraries(depth_to_pcl ${Depth2Pcl_LIBS})

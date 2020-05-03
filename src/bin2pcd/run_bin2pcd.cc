@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <omp.h>
 
-using std::string;
+using std::string ;
 
 int main(int argc, char *argv[])
 {

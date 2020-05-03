@@ -9,3 +9,5 @@ build/
 
 #ignore data
 data/
+
+.vscode

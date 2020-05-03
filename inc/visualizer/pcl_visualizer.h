@@ -7,7 +7,8 @@
 
 namespace pcl_visualizer {
 
-void pcl_visualizer_thread(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points);
+void pcl_visualizer_thread(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points,
+                           const uint8_t& flag);
 
 class Pcl_viewer{
 
@@ -22,6 +23,7 @@ public:
                   const double &value = 1);
 
   void run_viewer(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points,
+                  const uint8_t &flag = 0,
                   const std::string &id = "points",
                   const double &value = 1);
 

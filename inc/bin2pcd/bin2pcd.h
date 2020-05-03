@@ -2,11 +2,12 @@
 #define __BIN2PCD_H__
 
 #include <iostream>
+#include <vector>
 
 namespace bintopcd {
 
-using std::string;
-using std::vector;
+using std::string ;
+using std::vector ;
 
 void get_filename_list(const string& path, vector<string>& filename_list);
 

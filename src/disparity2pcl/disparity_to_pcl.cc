@@ -19,6 +19,10 @@ Dispt_pcl::Dispt_pcl(){
 
   camera_parameter_init();
 
+  point_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
+
+  point_cloud_flag_ = 0;
+
 }
 
 Dispt_pcl::~Dispt_pcl(){
@@ -54,6 +58,30 @@ void Dispt_pcl::work_flow(const std::string& image_path1,
   LOG_OUTPUT("convert into point cloud took {} ms", conver_pcl-resize_pointcloud );
 
 //  viewer();
+}
+
+void Dispt_pcl::work_flow(const cv::Mat& disp, const cv::Mat& color){
+
+  point_cloud_flag_ = 0;
+  disparity_image_ = disp;
+  color_image_ = color;
+
+  std::chrono::steady_clock::time_point time_point =
+      std::chrono::steady_clock::now();
+
+  create_pointcloud();
+
+  double resize_pointcloud = std::chrono::duration_cast<std::chrono::milliseconds>
+      (std::chrono::steady_clock::now() - time_point).count();
+  LOG_OUTPUT("resize num of {} points took {} ms",
+             disparity_image_.cols * disparity_image_.rows, resize_pointcloud);
+
+  convert_pointcloud();
+
+  double conver_pcl = std::chrono::duration_cast<std::chrono::milliseconds>
+      (std::chrono::steady_clock::now() - time_point).count();
+  LOG_OUTPUT("convert into point cloud took {} ms", conver_pcl-resize_pointcloud );
+
 }
 
 void Dispt_pcl::camera_parameter_init(){
@@ -111,9 +139,6 @@ inline void Dispt_pcl::disparity_image_process(const std::string& image_path){
   LOG_OUTPUT("matrix size {}", disparity_matrix_->size());
 
 #endif
-
-
-
 }
 
 inline void Dispt_pcl::add_color_image(const std::string &image_path){
@@ -131,8 +156,6 @@ inline void Dispt_pcl::add_color_image(const std::string &image_path){
 
 void Dispt_pcl::create_pointcloud(){
 
-  point_cloud = boost::make_shared<pcl::PointCloud<pcl::PointXYZRGB>>();
-
   point_cloud->resize(disparity_image_.cols * disparity_image_.rows);
 
 }
@@ -145,9 +168,18 @@ void Dispt_pcl::convert_pointcloud(){
 
     for(int pixel_u=0; pixel_u<disparity_image_.cols; pixel_u++){
 
-      double disparity = (double)disparity_image_.at<uint16_t>(pixel_v, pixel_u);
+//      double disparity = (double)disparity_image_.at<uint16_t>(pixel_v, pixel_u);
+      double disparity = (double)disparity_image_.at<uint8_t>(pixel_v, pixel_u);
 
-      double camera_Z = baseline_fb_/(disparity/256);
+#ifdef USE_DEBUG
+      if(disparity <= 256){
+        LOG_OUTPUT("u: {} v: {} disparity: {}", pixel_u, pixel_v, disparity/256);
+      }
+
+#endif
+
+//      double camera_Z = baseline_fb_/(disparity/256);
+      double camera_Z = baseline_fb_/(disparity);
 
       double camera_X = (pixel_u - camera_intrinsics_k_(0,2))\
           *camera_Z / camera_intrinsics_k_(0,0);
@@ -156,7 +188,7 @@ void Dispt_pcl::convert_pointcloud(){
           *camera_Z / camera_intrinsics_k_(1,1);
 
       temp_point.x = camera_Z;
-      temp_point.y = camera_X;
+      temp_point.y = -camera_X;
       temp_point.z = -camera_Y;
 
       cv::Vec3b& bgr = color_image_.at<cv::Vec3b>(pixel_v, pixel_u);
@@ -168,10 +200,16 @@ void Dispt_pcl::convert_pointcloud(){
       (*point_cloud)[pixel_v*disparity_image_.cols + pixel_u] = temp_point;
     }
   }
+
+  point_cloud_flag_ = 1;
 }
 
 pcl::PointCloud<pcl::PointXYZRGB>::Ptr& Dispt_pcl::get_point_cloud(){
   return point_cloud;
+}
+
+uint8_t& Dispt_pcl::get_flag(){
+  return point_cloud_flag_;
 }
 
 void Dispt_pcl::viewer(){

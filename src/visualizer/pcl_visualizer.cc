@@ -6,14 +6,21 @@
 
 namespace pcl_visualizer {
 
-void pcl_visualizer_thread(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points){
+void pcl_visualizer_thread(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points,
+                           const uint8_t& flag){
 
   LOG_OUTPUT("run visualier!");
 
   std::shared_ptr<pcl_visualizer::Pcl_viewer> pcl_viewer =
       std::make_shared<pcl_visualizer::Pcl_viewer>();
 
-  pcl_viewer->run_viewer(points);
+  while( points->size() == 0){
+
+    LOG_OUTPUT("zero points! waiting for points");
+
+  }
+
+  pcl_viewer->run_viewer(points, flag);
 
   LOG_OUTPUT("visualier exit!");
 
@@ -89,6 +96,7 @@ void Pcl_viewer::run_viewer(const pcl::PointCloud<pcl::PointXYZ>::Ptr &points,
 }
 
 void Pcl_viewer::run_viewer(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points,
+                            const uint8_t& flag,
                             const std::string &id,
                             const double &value){
 
@@ -96,10 +104,12 @@ void Pcl_viewer::run_viewer(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points
 
   while(!pcl_viewer->wasStopped()){
 
-    update_points(points, id, value);
+    if(flag){
+     update_points(points, id, value);
+    }
 
     pcl_viewer->spinOnce(100);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
