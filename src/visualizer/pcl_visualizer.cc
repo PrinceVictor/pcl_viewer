@@ -33,6 +33,7 @@ Pcl_viewer::Pcl_viewer(){
   pcl_viewer->setBackgroundColor(0, 0, 0);
   pcl_viewer->addCoordinateSystem(1.0);
   pcl_viewer->initCameraParameters();
+  pcl_viewer->loadCameraParameters("/home/victor/mobile_robot/pcl_viewer/build/camera.cam");
 
 }
 
@@ -104,9 +105,9 @@ void Pcl_viewer::run_viewer(const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &points
 
   while(!pcl_viewer->wasStopped()){
 
-    if(flag){
+    // if(flag){
      update_points(points, id, value);
-    }
+    // }
 
     pcl_viewer->spinOnce(100);
 //    std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -75,12 +75,12 @@ int main(int argc, char **argv)
                image_msg_ptr->get_msg_buf()->image_(0).time_stamp(),
                image_msg_ptr->time_stamp_update());
 
-    disp_pcl->work_flow(color, disp);
+    disp_pcl->work_flow(disp, color);
 
     steps++;
-//    cv::imshow("color", color);
-//    cv::imshow("disp", disp);
-//    cv::waitKey(10);
+    // cv::imshow("color", color);
+    // cv::imshow("disp", disp);
+    // cv::waitKey(0);
 
   }
 //  std::this_thread::sleep_for(std::chrono::seconds(5));

@@ -179,6 +179,9 @@ void Dispt_pcl::convert_pointcloud(){
 #endif
 
 //      double camera_Z = baseline_fb_/(disparity/256);
+      if (disparity==0){
+        disparity = 1;
+      }
       double camera_Z = baseline_fb_/(disparity);
 
       double camera_X = (pixel_u - camera_intrinsics_k_(0,2))\
@@ -187,9 +190,14 @@ void Dispt_pcl::convert_pointcloud(){
       double camera_Y = (pixel_v - camera_intrinsics_k_(1,2))\
           *camera_Z / camera_intrinsics_k_(1,1);
 
-      temp_point.x = camera_Z;
-      temp_point.y = -camera_X;
-      temp_point.z = -camera_Y;
+      // temp_point.x = camera_Z;
+      // temp_point.y = -camera_X;
+      // temp_point.z = -camera_Y;
+
+      //left hand coordinate
+      temp_point.x = camera_X;
+      temp_point.y = camera_Y;
+      temp_point.z = camera_Z;
 
       cv::Vec3b& bgr = color_image_.at<cv::Vec3b>(pixel_v, pixel_u);
 
