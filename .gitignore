@@ -11,3 +11,7 @@ build/
 data/
 
 .vscode
+
+cmake-build-release/
+
+.idea
