@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package image_msg;
+
+message image{
+    double time_stamp =1;
+    int32 height = 2;
+    int32 width = 3;
+    int32 channel = 4;
+    int32 size = 5;
+
+    bytes mat_data = 6;
+}
+
+message bbox{
+    int32 x_left_top = 1;
+    int32 y_left_top = 2;
+    int32 x_right_bottom = 3;
+    int32 y_right_bottom = 4;
+}
+
+message one_detection{    
+    float confindece = 1;
+    int32 this_class = 2;
+    bbox one_bbox = 3;
+}
+
+message detections{
+    bool detected_flag = 1;
+    repeated image image_ = 2;
+    repeated one_detection detection = 3;
+}
+
+message image_buf{
+	repeated image image_ = 1;
+}
